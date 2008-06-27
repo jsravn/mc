@@ -27,7 +27,7 @@ static float g_err;
 
 void mc_simulate_many(float (*simulate_once)(),
 		      int N, float absolute_precision, float relative_precision,
-		      int print_iteration)
+		      void (*callback)(int iteration))
 {
 	int i;
 	float *measurements;
@@ -38,9 +38,6 @@ void mc_simulate_many(float (*simulate_once)(),
 	g_mu = 0.0f;
 	g_var = 0.0f;
 	g_err = 0.0f;
-
-	if (print_iteration)
-		puts("n,mu,err,var");
 
 	for (i = 0; i < N; i++) {
 		result = simulate_once();
@@ -54,8 +51,9 @@ void mc_simulate_many(float (*simulate_once)(),
 		g_var = sum2 / (i + 1) - g_mu * g_mu;
 		g_err = sqrtf(g_var / (i + 1));
 
-		if (print_iteration)
-			printf("%d,%f,%f,%f\n", i, g_mu, g_err, g_var);
+		if (callback)
+			callback(i);
+
 		if (i > 0 && g_err != 0.0f
 		    && (g_err < absolute_precision 
 			|| g_err < relative_precision * g_mu))

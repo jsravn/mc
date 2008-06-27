@@ -68,6 +68,20 @@ static mu_test test_sim_uni()
 	return 0;
 }
 
+static int g_it = 0;
+static void mock_cb(int iteration)
+{
+	g_it = iteration;
+}
+
+static mu_test test_callback()
+{
+	mc_simulate_many(mock_sim, 12, 0.0, 0.0, mock_cb);
+	mu_assert("g_it == 11", g_it == 11);
+
+	return 0;
+}
+
 static mu_test tests() 
 {
 	unsigned long s = 123456789;
@@ -78,6 +92,7 @@ static mu_test tests()
 	mu_run(test_sim_exp);
 	mu_run(test_sim_norm);
 	mu_run(test_sim_uni);
+	mu_run(test_callback);
 
 	return 0;
 }

@@ -30,10 +30,13 @@
  * error. Use the mc_set_errconf(int) function to set the confidence level for
  * this final estimate, otherwise it defaults to 66% (roughly equivalent to one
  * standard deviation).
+ *
+ * The callback function is called each iteration. Set it to NULL to not do
+ * anything.
  */
 void mc_simulate_many(float (*simulate_once)(),
 		      int N, float absolute_precision, float relative_precision,
-		      int print_iterations);
+		      void (*callback)(int iteration));
 
 /* Returns the observed mean from running the simulation many times. */
 float mc_mu();
@@ -43,5 +46,8 @@ float mc_err();
 
 /* Returns the observed variance from running the simulation many times. */
 float mc_var();
+
+/* Convenience callback for printing out simple information each iteration */
+void mc_print_iteration(int iteration);
 
 #endif
