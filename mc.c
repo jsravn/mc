@@ -77,3 +77,10 @@ float mc_err()
 {
 	return g_err;
 }
+
+void mc_print_iteration(int iteration)
+{
+	if (iteration == 0)
+		puts("n,mu,err,var");
+	printf("%d,%f,%f,%f\n", iteration, mc_mu(), mc_err(), mc_var());
+}
