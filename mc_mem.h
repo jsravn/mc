@@ -8,6 +8,7 @@
 #define MC_MEM_H
 
 void *mc_malloc(size_t size);
+void *mc_realloc(void *ptr, size_t size);
 void mc_free(void *ptr);
 
 #endif
