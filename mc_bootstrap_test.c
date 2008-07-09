@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "minunit.h"
 #include "mc_gen.h"
 #include "mc_prng.h"

@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <time.h>
-
 #include "minunit.h"
 #include "mc_prng.h"
 
