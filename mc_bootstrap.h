@@ -19,11 +19,14 @@
  * Original author: James S. Ravn (james.ravn@gmail.com)
  */
 
+#ifndef MC_BOOTSTRAP_H
+#define MC_BOOTSTRAP_H
+
 /*
  * Allocates required memory structures for use in the bootstrap algorithm and
  * frees any previously used memory.
  *
- * The number function should return a random int over the uniform range [from,
+ * The number function should return a random long over the uniform range [from,
  * to].
  *
  * The size parameter determines how much memory is initially allocated for
@@ -31,10 +34,14 @@
  * machine. The algorithm will automatically allocate additional memory of this
  * size as needed.
  */
-void bs_init(int (*number)(int from, int to), unsigned long alloc_size);
+void bs_init(unsigned long (*number)(unsigned long from, unsigned long to),
+	     unsigned long alloc_size);
 
-/* Adds a measurement to be used by the algorithm when sampling. */
-void bs_add(float measurement);
+/*
+ * Adds a measurement to be used by the algorithm when sampling. Returns a
+ * non-zero value if unsuccessful.
+ */
+int bs_add(float measurement);
 
 /*
  * Returns one of the provided measurements at random. Each measurement has an
@@ -44,3 +51,6 @@ float bs_sample();
 
 /* Free all memory used by the bootstrap algorithm. */
 void bs_free();
+
+#endif
+
