@@ -27,7 +27,7 @@ void mc_simulate_many(float (*simulate_once)(),
 		
 		g_mu = sum1 / (i + 1);
 		g_var = sum2 / (i + 1) - g_mu * g_mu;
-		g_err = sqrtf(g_var / (i + 1));
+		g_err = sqrt(g_var / (i + 1));
 
 		if (callback)
 			callback(i);
