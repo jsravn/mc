@@ -7,7 +7,7 @@ LIBS = -lm
 
 test : mc_test mc_gen_test mc_prng_test mc_bootstrap_test
 	@for t in $^; do \
-	  echo "Running $$t..."; $$t; echo ""; \
+	  echo "Running ./$$t..."; ./$$t; echo ""; \
 	done
 
 %_test : $(OBJECTS) %_test.o
