@@ -5,7 +5,7 @@
 #include "mc_bootstrap.h"
 #include "mc_mem.h"
 
-#define BLOCK_SIZE ALLOC_SIZE / sizeof(float)
+#define BLOCK_SIZE (ALLOC_SIZE / sizeof(float))
 
 struct node {
 	struct node *next;
@@ -90,5 +90,18 @@ int bs_add(float measurement)
 
 float bs_sample()
 {
-	return 0.0;
+	long i, n, block, block_n;
+	struct node *c;
+
+	if (g_size == 0)
+		return 0.0;
+
+	n = g_num(0, g_size - 1);
+	block = n / BLOCK_SIZE;
+	block_n = n % BLOCK_SIZE;
+
+	for (c = g_head, i = 0; i < block; i++)
+		c = c->next;
+
+	return c->data[block_n];
 }

@@ -13,13 +13,18 @@ static mu_test test_add_and_sample()
 
 	mu_assert("init in test_add_and_sample", bs_init(mc_gen_number) == 0);
 
-	mu_assert("bs_add(0.75)", bs_add(0.75) == 0);
-	for (i = 0; i < 3; i++)
+	mu_assert("empty sample returns 0.0", bs_sample() == 0.0);
+
+	for (i = 0; i < 3; i++) {
+		mu_assert("bs_add(0.75)", bs_add(0.75) == 0);
+	}
+	for (i = 0; i < 10; i++) {
 		mu_assert("equals 0.75", bs_sample() == 0.75);
+	}
 
 	mu_assert("bs_add(0.5)", bs_add(0.5) == 0);
 	founda = foundb = 0;
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < 20; i++) {
 		if (bs_sample() == 0.5)
 			founda++;
 		if (bs_sample() == 0.75)
@@ -61,7 +66,7 @@ static mu_test tests()
 	mc_gen_init(mc_prng_next);
 
 	mu_run(test_init);
-/* 	mu_run(test_add_and_sample); */
+	mu_run(test_add_and_sample);
 	mu_run(test_add_failure);
 
 	return 0;
