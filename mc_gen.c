@@ -29,14 +29,14 @@ float mc_gen_std_normal()
 
 	if (phase == 0) {
 		do {
-			v1 = 2.0f * mc_gen_uniform() - 1.0f;
-			v2 = 2.0f * mc_gen_uniform() - 1.0f;
+			v1 = 2.0 * mc_gen_uniform() - 1.0;
+			v2 = 2.0 * mc_gen_uniform() - 1.0;
 			s = v1 * v1 + v2 * v2;
 		} while (s >= 1 || s == 0);
 		
-		x = v1 * sqrtf(-2.0f * logf(s) / s);
+		x = v1 * sqrt(-2.0 * log(s) / s);
 	} else
-		x = v2 * sqrtf(-2.0f * logf(s) / s);
+		x = v2 * sqrt(-2.0 * log(s) / s);
 
 	phase = 1 - phase;
 
@@ -50,5 +50,5 @@ float mc_gen_normal(float mu, float sigma)
 
 float mc_gen_exponential(float lambda)
 {
-	return -1.0f * logf(mc_gen_uniform()) / lambda;
+	return -1.0 * log(mc_gen_uniform()) / lambda;
 }
