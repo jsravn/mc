@@ -3,7 +3,6 @@
 
 #include "mc.h"
 #include "mc_gen.h"
-#include "mc_mem.h"
 
 static float g_mu;
 static float g_var;
@@ -14,11 +13,9 @@ void mc_simulate_many(float (*simulate_once)(),
 		      void (*callback)(int iteration))
 {
 	int i;
-	float *measurements;
 	float sum1 = 0.0f, sum2 = 0.0f;
 	float result;
 
-	measurements = mc_malloc(sizeof(float) * N);
 	g_mu = 0.0f;
 	g_var = 0.0f;
 	g_err = 0.0f;
@@ -26,8 +23,6 @@ void mc_simulate_many(float (*simulate_once)(),
 	for (i = 0; i < N; i++) {
 		result = simulate_once();
 		
-		measurements[i] = result;
-
 		sum1 += result;
 		sum2 += result * result;
 		
@@ -43,8 +38,6 @@ void mc_simulate_many(float (*simulate_once)(),
 			|| g_err < relative_precision * g_mu))
 			break;
 	}
-
-	mc_free(measurements);
 }
 
 float mc_mu()
