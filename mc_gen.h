@@ -20,8 +20,11 @@ void mc_gen_init(unsigned long (*prng)());
 /* Returns a float in the uniform interval over [0, 1). */
 float mc_gen_uniform();
 
-/* Returns an integer in the uniform range [from, to]. */
-int mc_gen_number(int from, int to);
+/* Returns a long in the uniform range [from, to]. */
+long mc_gen_number(long from, long to);
+
+/* Returns an unsigned long in the uniform range [from, to]. */
+unsigned long mc_gen_unumber(unsigned long from, unsigned long to);
 
 /* Returns a float in the normal distribution. */
 float mc_gen_normal(float mu, float sigma);

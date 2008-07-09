@@ -15,9 +15,14 @@ float mc_gen_uniform()
 	return prng_next() * f;
 }
 
-int mc_gen_number(int from, int to)
+long mc_gen_number(long from, long to)
 {
-	return (int)(mc_gen_uniform() * (to - from + 1)) + from;
+	return (long)(mc_gen_uniform() * (to - from + 1)) + from;
+}
+
+unsigned long mc_gen_unumber(unsigned long from, unsigned long to)
+{
+	return (unsigned long)(mc_gen_uniform() * (to - from + 1)) + from;
 }
 
 /* Adapted from Knuth's implementation of Marsaglia's algorithm */

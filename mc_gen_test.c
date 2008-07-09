@@ -1,3 +1,5 @@
+#include <limits.h>
+
 #include "minunit.h"
 #include "mc_gen.h"
 
@@ -33,18 +35,27 @@ static mu_test test_uniform()
 static mu_test test_number() 
 {
 	int i, t, found;
+	unsigned long t2;
 	for (i = 0; i < 1000; i++) {
 		t = mc_gen_number(-5, 10);
 		mu_assert("number in range", t >= -5 && t <= 10);
 	}
 
 	found = 0;
-	for (i = 0; i < 100; i++) {
+	for (i = 0; i < 20; i++) {
 		t = mc_gen_number(-5, 3);
 		if (t == -5)
 			found = 1;
 	}
 	mu_assert("-5 should have happened at least once", found);
+
+	found = 0;
+	for (i = 0; i < 20; i++) {
+		t2 = mc_gen_unumber(ULONG_MAX - 2, ULONG_MAX);
+		if (t2 == ULONG_MAX)
+			found = 1;
+	}
+	mu_assert("ULONG_MAX should have happened at least once", found);
 
 	return 0;
 }
