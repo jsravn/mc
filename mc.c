@@ -2,7 +2,6 @@
 #include <math.h>
 
 #include "mc.h"
-#include "mc_gen.h"
 
 static float g_mu;
 static float g_var;
