@@ -23,12 +23,15 @@
  * Allocates required memory structures for use in the bootstrap algorithm and
  * frees any previously used memory.
  *
+ * The number function should return a random int over the uniform range [from,
+ * to].
+ *
  * The size parameter determines how much memory is initially allocated for
  * stored measurements. 4 bytes are allocated for each measurement on a 32-bit
  * machine. The algorithm will automatically allocate additional memory of this
  * size as needed.
  */
-void bs_init(int size);
+void bs_init(int (*number)(int from, int to), unsigned long alloc_size);
 
 /* Adds a measurement to be used by the algorithm when sampling. */
 void bs_add(float measurement);
