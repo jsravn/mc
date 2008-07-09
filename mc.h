@@ -6,12 +6,21 @@
  * The implementation is provided in mc.c.
  *
  * Original author: James S. Ravn (james.ravn@gmail.com)
-*/
+ */
 
 #ifndef MC_H
 #define MC_H
 
 /* 
+ * Set to 0 to disable the bootstrap algorithm. The bootstrap algorithm is used
+ * to get a more accurate value for the error. However it requires a lot of
+ * memory since it stores a result for every iteration. So on a 32-bit machine,
+ * this is 4 bytes an iteration, or roughly 4MB for every 1 million
+ * iterations. For most machines and simulations this shouldn't be an issue.
+ */
+#define BOOTSTRAP 1
+
+/*
  * This is the big kahuna for running a simulation many times. The
  * simulate_once function returns a float representing its outcome. e.g. in a
  * binomial experiment, it could return 1.0f for true and 0.0f for false.

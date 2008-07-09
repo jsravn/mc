@@ -1,25 +1,9 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 
 #include "mc.h"
 #include "mc_gen.h"
-
-static void *mu_malloc(size_t size)
-{
-	void *p = malloc(size);
-	if (p == NULL) {
-		printf("Unable to allocate memory!");
-		exit(EXIT_FAILURE);
-	}
-	return p;
-}
-
-static void mu_free(void *ptr)
-{
-	free(ptr);
-	ptr = NULL;
-}
+#include "mc_mem.h"
 
 static float g_mu;
 static float g_var;
@@ -34,7 +18,7 @@ void mc_simulate_many(float (*simulate_once)(),
 	float sum1 = 0.0f, sum2 = 0.0f;
 	float result;
 
-	measurements = mu_malloc(sizeof(float) * N);
+	measurements = mc_malloc(sizeof(float) * N);
 	g_mu = 0.0f;
 	g_var = 0.0f;
 	g_err = 0.0f;
@@ -60,7 +44,7 @@ void mc_simulate_many(float (*simulate_once)(),
 			break;
 	}
 
-	mu_free(measurements);
+	mc_free(measurements);
 }
 
 float mc_mu()
