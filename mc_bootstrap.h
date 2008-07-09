@@ -16,6 +16,14 @@
  * bs_free(). bs_free() is not required to re-init. bs_init() will automatically
  * free any previously allocated memory.
  *
+ * The main drawback is the memory requirement to store each measurement. On
+ * long running simulations this can consume a large amount of memory. Consider
+ * that on a 32-bit system a float is usually 4 bytes. At 4 million
+ * measurements, we're consuming 16MB of memory. At 100 million, 400MB. So be
+ * careful when using this algorithm on long running simulations. One solution
+ * is to only add a percentage of measurements with a uniform distribution,
+ * since the bootstrap algorithm just needs a representative sample.
+ *
  * Original author: James S. Ravn (james.ravn@gmail.com)
  */
 
@@ -29,13 +37,20 @@
  * The number function should return a random long over the uniform range [from,
  * to].
  *
- * The size parameter determines how much memory is initially allocated for
- * stored measurements. 4 bytes are allocated for each measurement on a 32-bit
- * machine. The algorithm will automatically allocate additional memory of this
- * size as needed.
+ * Returns zero on success.
  */
-void bs_init(unsigned long (*number)(unsigned long from, unsigned long to),
-	     unsigned long alloc_size);
+int bs_init(long (*number)(long from, long to));
+
+/*
+ * ALLOC_SIZE determines how much memory is allocated for each block of stored
+ * measurements. The optimum value depends on the expected number of
+ * measurements. The algorithm uses a linked list of these blocks. So it
+ * requires O(n / (alloc_size / sizeof(float))) time to find the correct block
+ * to use. Depending on the number of measurements, a larger ALLOC_SIZE can
+ * improve speed at the risk of more wasted memory.
+ */
+#define K * 1024
+#define ALLOC_SIZE (256 K)
 
 /*
  * Adds a measurement to be used by the algorithm when sampling. Returns a

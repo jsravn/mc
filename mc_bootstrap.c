@@ -5,59 +5,90 @@
 #include "mc_bootstrap.h"
 #include "mc_mem.h"
 
-/* Generate random unsigned longs */
-static unsigned long (*g_num)(unsigned long from, unsigned long to);
-static unsigned long g_alloc_size = 0; /* Allocation size */
-static unsigned long g_size = 0; /* Number of g_measurements */
-static float *g_measurements = NULL; /* Float array of measurements */
+#define BLOCK_SIZE ALLOC_SIZE / sizeof(float)
 
-/* Postconditions: g_measurements = NULL and g_size = 0 */
-void bs_free()
-{
-	if (!g_measurements)
-		return;
+struct node {
+	struct node *next;
+	float data[BLOCK_SIZE];
+};
 
-	mc_free(g_measurements);
-	g_measurements = NULL;
-	g_size = 0;
-}
-
-void bs_init(unsigned long (*number)(unsigned long from, unsigned long to),
-	     unsigned long alloc_size)
-{
-	if (g_measurements)
-		bs_free();
-
-	g_num = number;
-	g_alloc_size = alloc_size;
-	g_measurements = mc_malloc(sizeof(float) * alloc_size);
-}
+/* Generate random longs */
+static long (*g_num)(long from, long to);
+static long g_size = 0; /* Number of total measurements */
+static long g_tsize = 0; /* Number of measurements in tail block */
+static struct node *g_head = NULL; /* Linked list of measurements */
+static struct node *g_tail = NULL; /* Last item in linked list */
 
 static int increase_size()
 {
-	/* Check for potential overflow */
-	if (g_alloc_size > ULONG_MAX / 2) {
-		puts("Can't allocate memory for bootstrap measurements!");
-		printf("size would be > %lu\n", ULONG_MAX);
-		return -1;
-	}
+	struct node *c;
 
-	g_alloc_size *= 2;
-	g_measurements = mc_realloc(g_measurements, g_alloc_size);
+	c = mc_malloc(sizeof(struct node));
+	if (!c)
+		return -1;
+	c->next = NULL;
+
+	if (g_tail)
+		g_tail->next = c;
+	else
+		g_head = c;
+	g_tail = c;
+	g_tsize = 0;
+
 	return 0;
 }
 
+int bs_init(long (*number)(long from, long to))
+{
+	if (g_head)
+		bs_free();
+
+	g_num = number;
+
+	return increase_size();
+}
+
+/* Postconditions: g_head = NULL and g_size = 0 */
+void bs_free()
+{
+	struct node *c, *n;
+
+	if (!g_head)
+		return;
+
+	for (c = g_head; c; c = n) {
+		n = c->next;
+		mc_free(c);
+	}
+	g_head = NULL;
+	g_tail = NULL;
+	g_tsize = 0;
+	g_size = 0;
+}
+
+/* Precondition: increase_size() has been called at least once */
 int bs_add(float measurement)
 {
-	if (g_size + 1 > g_alloc_size)
-		if (increase_size() != 0)
-			return -1;
+	int r;
 
-	g_measurements[g_size++] = measurement;
+	if (g_tsize + 1 > BLOCK_SIZE) {
+		r = increase_size();
+		if (r != 0)
+			return -1;
+	}
+
+	if (g_size == LONG_MAX) {
+		puts("Can't exceed LONG_MAX # of measurements.");
+		return -1;
+	}
+
+	g_tail->data[g_tsize++] = measurement;
+	g_size++;
+
 	return 0;
 }
 
 float bs_sample()
 {
-	return g_measurements[g_num(0, g_size - 1)];
+	return 0.0;
 }

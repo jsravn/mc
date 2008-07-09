@@ -1,3 +1,5 @@
+#include <limits.h>
+
 #include "minunit.h"
 #include "mc_gen.h"
 #include "mc_prng.h"
@@ -9,7 +11,7 @@ static mu_test test_add_and_sample()
 {
 	int i, founda, foundb;
 
-	bs_init(mc_gen_unumber, 1);
+	mu_assert("init in test_add_and_sample", bs_init(mc_gen_number) == 0);
 
 	mu_assert("bs_add(0.75)", bs_add(0.75) == 0);
 	for (i = 0; i < 3; i++)
@@ -30,10 +32,23 @@ static mu_test test_add_and_sample()
 
 	return 0;
 }
+static mu_test test_add_failure()
+{
+	unsigned long i;
+
+	mu_assert("init in test_add_failure", bs_init(mc_gen_number) == 0);
+
+	for (i = 0; i < 1e6; i++)
+		mu_assert("add should succeed", bs_add(1.5) == 0);
+
+	bs_free();
+
+	return 0;
+}
 
 static mu_test test_init()
 {
-	bs_init(mc_gen_unumber, 10);
+	mu_assert("init in test_init", bs_init(mc_gen_number) == 0);
 	bs_free();
 
 	return 0;
@@ -46,7 +61,8 @@ static mu_test tests()
 	mc_gen_init(mc_prng_next);
 
 	mu_run(test_init);
-	mu_run(test_add_and_sample);
+/* 	mu_run(test_add_and_sample); */
+	mu_run(test_add_failure);
 
 	return 0;
 }
