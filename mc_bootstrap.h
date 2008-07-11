@@ -5,11 +5,12 @@
  * It is a simple algorithm. It will randomly select a value from one of the
  * provided measurements. It requires a lot of measurements to work well.
  *
- * This can be used to get the error of an unknown distribution. For example, by
- * sampling 200 random values and sorting them, one can find the 66% confidence
- * error by finding the difference between the 35th and 166th values and
- * dividing by 2. This is similar to one standard deviation in the normal
- * distribution.
+ * This can be used to get the error of the mean of an unknown distribution. For
+ * example, by sampling 201 mean values and sorting them, one can find the 66%
+ * confidence error (roughly equivalent to standard error in the normal
+ * distribution) by finding the difference between the 35th (101-66) and 167th
+ * (101+66) values and dividing by 2. See calc_bs_error in mc.c for an example
+ * of this.
  *
  * As an example:
  *   void *bootstrap = bs_init(mc_gen_number); -> returns bootstrap object
@@ -63,7 +64,7 @@ int bs_add(void *bootstrap, float measurement);
  * Returns one of the provided measurements at random. It is sampled using the
  * number function pointer provided in bs_init.
  */
-float bs_sample(void *bootstrap);
+float bs_sample(const void *bootstrap);
 
 /*
  * Free all memory associated with the given bootstrap object. The bootstrap

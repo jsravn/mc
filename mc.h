@@ -21,6 +21,16 @@
 #define BOOTSTRAP 1
 
 /*
+ * Initialize the bootstrap error algorithm. The confidence represents the
+ * confidence interval for the error. 66% approximates 1 standard deviation on
+ * a normal distribution and is commonly used as an error estimate.
+ *
+ * The number function should generate a random long over the uniform interval
+ * [to, from].
+ */
+void mc_init_bs(int confidence, long (*number)(long to, long from));
+
+/*
  * This is the big kahuna for running a simulation many times. The
  * simulate_once function returns a float representing its outcome. e.g. in a
  * binomial experiment, it could return 1.0f for true and 0.0f for false.

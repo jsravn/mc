@@ -101,11 +101,11 @@ int bs_add(void *bootstrap, float measurement)
 	return 0;
 }
 
-float bs_sample(void *bootstrap)
+float bs_sample(const void *bootstrap)
 {
 	long i, n, block, block_n;
 	struct node *c;
-	struct bootstrap *bs = bootstrap;
+	const struct bootstrap *bs = bootstrap;
 
 	if (bs->size == 0)
 		return 0.0;
