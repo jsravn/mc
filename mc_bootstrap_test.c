@@ -10,51 +10,59 @@ int tests_run = 0;
 static mu_test test_add_and_sample()
 {
 	int i, founda, foundb;
+	void *bs;
 
-	mu_assert("init in test_add_and_sample", bs_init(mc_gen_number) == 0);
+	bs = bs_init(mc_gen_number);
+	mu_assert("init in test_add_and_sample", bs != NULL);
 
-	mu_assert("empty sample returns 0.0", bs_sample() == 0.0);
+	mu_assert("empty sample returns 0.0", bs_sample(bs) == 0.0);
 
 	for (i = 0; i < 3; i++) {
-		mu_assert("bs_add(0.75)", bs_add(0.75) == 0);
+		mu_assert("bs_add(0.75)", bs_add(bs, 0.75) == 0);
 	}
 	for (i = 0; i < 10; i++) {
-		mu_assert("equals 0.75", bs_sample() == 0.75);
+		mu_assert("equals 0.75", bs_sample(bs) == 0.75);
 	}
 
-	mu_assert("bs_add(0.5)", bs_add(0.5) == 0);
+	mu_assert("bs_add(0.5)", bs_add(bs, 0.5) == 0);
 	founda = foundb = 0;
 	for (i = 0; i < 20; i++) {
-		if (bs_sample() == 0.5)
+		if (bs_sample(bs) == 0.5)
 			founda++;
-		if (bs_sample() == 0.75)
+		if (bs_sample(bs) == 0.75)
 			foundb++;
 	}
 	mu_assert("0.5 happened at least once", founda > 0);
 	mu_assert("0.75 happened at least once", foundb > 0);
 
-	bs_free();
+	bs_free(bs);
 
 	return 0;
 }
+
 static mu_test test_add_failure()
 {
 	unsigned long i;
+	void *bs;
 
-	mu_assert("init in test_add_failure", bs_init(mc_gen_number) == 0);
+	bs = bs_init(mc_gen_number);
+	mu_assert("init in test_add_failure", bs != NULL);
 
 	for (i = 0; i < 1e6; i++)
-		mu_assert("add should succeed", bs_add(1.5) == 0);
+		mu_assert("add should succeed", bs_add(bs, 1.5) == 0);
 
-	bs_free();
+	bs_free(bs);
 
 	return 0;
 }
 
 static mu_test test_init()
 {
-	mu_assert("init in test_init", bs_init(mc_gen_number) == 0);
-	bs_free();
+	void *bs;
+
+	bs = bs_init(mc_gen_number);
+	mu_assert("init in test_init", bs != NULL);
+	bs_free(bs);
 
 	return 0;
 }

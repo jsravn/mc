@@ -12,14 +12,15 @@ struct node {
 	float data[BLOCK_SIZE];
 };
 
-/* Generate random longs */
-static long (*g_num)(long from, long to);
-static long g_size = 0; /* Number of total measurements */
-static long g_tsize = 0; /* Number of measurements in tail block */
-static struct node *g_head = NULL; /* Linked list of measurements */
-static struct node *g_tail = NULL; /* Last item in linked list */
+struct bootstrap {
+	long (*num)(long from, long to); /* Generate random longs */
+	long size;         /* Number of total measurements */
+	long tsize;        /* Number of measurements in tail block */
+	struct node *head; /* Linked list of measurements */
+	struct node *tail; /* Last item in linked list */
+};
 
-static int increase_size()
+static int increase_size(struct bootstrap *bs)
 {
 	struct node *c;
 
@@ -28,79 +29,92 @@ static int increase_size()
 		return -1;
 	c->next = NULL;
 
-	if (g_tail)
-		g_tail->next = c;
+	if (bs->tail)
+		bs->tail->next = c;
 	else
-		g_head = c;
-	g_tail = c;
-	g_tsize = 0;
+		bs->head = c;
+	bs->tail = c;
+	bs->tsize = 0;
 
 	return 0;
 }
 
-int bs_init(long (*number)(long from, long to))
+void *bs_init(long (*number)(long from, long to))
 {
-	if (g_head)
-		bs_free();
+	struct bootstrap *bs;
 
-	g_num = number;
+	bs = mc_malloc(sizeof(struct bootstrap));
+	if (bs == NULL)
+		return NULL;
 
-	return increase_size();
+	bs->num = number;
+	bs->size = 0;
+	bs->tsize = 0;
+	bs->head = NULL;
+	bs->tail = NULL;
+
+	if (increase_size(bs) != 0) {
+		bs_free(bs);
+		bs = NULL;
+	}
+
+	return bs;
 }
 
 /* Postconditions: g_head = NULL and g_size = 0 */
-void bs_free()
+void bs_free(void *bootstrap)
 {
 	struct node *c, *n;
+	struct bootstrap *bs = bootstrap;
 
-	if (!g_head)
+	if (!bs->head)
 		return;
 
-	for (c = g_head; c; c = n) {
+	for (c = bs->head; c; c = n) {
 		n = c->next;
 		mc_free(c);
 	}
-	g_head = NULL;
-	g_tail = NULL;
-	g_tsize = 0;
-	g_size = 0;
+
+	mc_free(bs);
 }
 
 /* Precondition: increase_size() has been called at least once */
-int bs_add(float measurement)
+int bs_add(void *bootstrap, float measurement)
 {
 	int r;
+	struct bootstrap *bs = bootstrap;
 
-	if (g_tsize + 1 > BLOCK_SIZE) {
-		r = increase_size();
+	if (bs->tsize + 1 > BLOCK_SIZE) {
+		r = increase_size(bs);
 		if (r != 0)
 			return -1;
 	}
 
-	if (g_size == LONG_MAX) {
+	if (bs->size == LONG_MAX) {
 		puts("Can't exceed LONG_MAX # of measurements.");
 		return -1;
 	}
 
-	g_tail->data[g_tsize++] = measurement;
-	g_size++;
+	bs->tail->data[bs->tsize++] = measurement;
+	bs->size++;
 
 	return 0;
 }
 
-float bs_sample()
+float bs_sample(void *bootstrap)
 {
 	long i, n, block, block_n;
 	struct node *c;
+	struct bootstrap *bs = bootstrap;
 
-	if (g_size == 0)
+	if (bs->size == 0)
 		return 0.0;
 
-	n = g_num(0, g_size - 1);
+	n = bs->num(0, bs->size - 1);
 	block = n / BLOCK_SIZE;
 	block_n = n % BLOCK_SIZE;
 
-	for (c = g_head, i = 0; i < block; i++)
+	for (c = bs->head, i = 0; i < block; i++)
 		c = c->next;
 
 	return c->data[block_n];

@@ -11,10 +11,11 @@
  * dividing by 2. This is similar to one standard deviation in the normal
  * distribution.
  *
- * To use, first call bs_init(). Then add measurements using bs_add(float). Then
- * sample from the distribution using bs_sample(). When done, call
- * bs_free(). bs_free() is not required to re-init. bs_init() will automatically
- * free any previously allocated memory.
+ * As an example:
+ *   void *bootstrap = bs_init(mc_gen_number); -> returns bootstrap object
+ *   bs_add(bootstrap, 0.5); -> adds 0.5 to measurements
+ *   bs_sample(bootstrap); -> returns 0.5
+ *   bs_free(bootstrap); -> frees memory, object is no longer usable
  *
  * The main drawback is the memory requirement to store each measurement. On
  * long running simulations this can consume a large amount of memory. Consider
@@ -34,12 +35,12 @@
  * Allocates required memory structures for use in the bootstrap algorithm and
  * frees any previously used memory.
  *
- * The number function should return a random long over the uniform range [from,
- * to].
+ * The number function should return a random long over a uniform range [from,
+ * to]. Unless you want to do something funky.
  *
- * Returns zero on success.
+ * Returns a pointer to a bootstrap object on success. Returns NULL otherwise.
  */
-int bs_init(long (*number)(long from, long to));
+void *bs_init(long (*number)(long from, long to));
 
 /*
  * ALLOC_SIZE determines how much memory is allocated for each block of stored
@@ -56,16 +57,19 @@ int bs_init(long (*number)(long from, long to));
  * Adds a measurement to be used by the algorithm when sampling. Returns a
  * non-zero value if unsuccessful.
  */
-int bs_add(float measurement);
+int bs_add(void *bootstrap, float measurement);
 
 /*
- * Returns one of the provided measurements at random. Each measurement has an
- * equal chance of being returned.
+ * Returns one of the provided measurements at random. It is sampled using the
+ * number function pointer provided in bs_init.
  */
-float bs_sample();
+float bs_sample(void *bootstrap);
 
-/* Free all memory used by the bootstrap algorithm. */
-void bs_free();
+/*
+ * Free all memory associated with the given bootstrap object. The bootstrap
+ * object is unusable after using this function.
+ */
+void bs_free(void *bootstrap);
 
 #endif
 
