@@ -1,0 +1,67 @@
+		      Simple Monte Carlo Framework
+
+		       Copyright 2008 James Ravn
+			  james.ravn@gmail.com
+
+Introduction
+------------
+
+The goal is to provide a monte carlo framework that is fast, portable,
+and simple. The only thing required by the user is to create their
+simulation.
+
+Where To Get It
+---------------
+
+The latest version can be cloned using git: 
+    
+    git clone git://git.jsravn.com/mc.git
+
+Please send bug reports and patches to mc-devel@lists.jsravn.com.
+
+Testing & Compiling
+-------------------
+
+Run 'make test' to compile and run all the tests. Take a look at the
+unit tests (files ending with _test.c) and Makefile to get an idea of
+how to compile your own project.
+
+Using
+-----
+
+The details of using the framework are provided in the header
+files. Mc.h is a good starting point.
+
+The basic steps are:
+
+1. Write a function that executes a single iteration of your
+simulation. Have it return a float. For example, return 1.0 if it is
+successful, 0.0 if it is not.
+
+2. Initialize the bootstrap error algorithm (see mc_init_bs).
+
+3. Pass in your function to mc_simulate_many. The results can be
+accessed using the functions mc_mu(), mc_err(), and mc_var().
+
+Features
+--------
+
+* Bootstrap algorithm
+* Error calculation using bootstrap
+* High quality pseudo random number generator
+* Distribution generators
+* No required libraries apart from the C90 standard library
+
+Portability
+-----------
+
+It is written in ANSI C, requiring only the long long C99 extension for
+the provided psuedo random number generator. If needed it is easy to
+write a C90 compatible psuedo random number generator. Just create your
+implementation of mc_prng.h.
+
+Future ideas
+------------
+
+* Create some example simulations
+* Create interfaces to work w/ Python/Ruby
