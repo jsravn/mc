@@ -46,8 +46,7 @@
 #define MC_BOOTSTRAP_H
 
 /*
- * Allocates required memory structures for use in the bootstrap algorithm and
- * frees any previously used memory.
+ * Allocates required memory structures for use in the bootstrap algorithm.
  *
  * The number function should return a random long over a uniform range [from,
  * to]. Unless you want to do something funky.
@@ -75,7 +74,9 @@ int bs_add(void *bootstrap, float measurement);
 
 /*
  * Returns one of the provided measurements at random. It is sampled using the
- * number function pointer provided in bs_init.
+ * number function pointer provided in bs_init. Note this means we are limited
+ * by the positive range of a long. On a 32-bit machine this is around 2
+ * billion measurements.
  */
 float bs_sample(const void *bootstrap);
 
