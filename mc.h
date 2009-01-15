@@ -58,10 +58,8 @@ void mc_init_bs(int confidence, long (*number)(long to, long from));
  *
  * The error is calculated each iteration using a fast approximation based on
  * the assumption of a normal distribution. It then uses the bootstrap
- * algorithm after the final iteration to get a much more accurate estimate of
- * error. Use the mc_set_errconf(int) function to set the confidence level for
- * this final estimate, otherwise it defaults to 66% (roughly equivalent to one
- * standard deviation).
+ * algorithm if BOOTSTRAP is defined to get a more accurate estimate of final
+ * error.
  *
  * The callback function is called each iteration. Set it to NULL to not do
  * anything.
@@ -73,7 +71,11 @@ void mc_simulate_many(float (*simulate_once)(),
 /* Returns the observed mean from running the simulation many times. */
 float mc_mu();
 
-/* Returns the +/- error of mu, estimated using the bootstrap algorithm. */
+/*
+ * Returns the +/- error of mu. This is calculated by the bootstrap algorithm
+ * if BOOTSTRAP is defined. Otherwise it is an approximation based on the
+ * normal distribution.
+ */
 float mc_err();
 
 /* Returns the observed variance from running the simulation many times. */
