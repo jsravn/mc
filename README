@@ -1,4 +1,4 @@
-		      Simple Monte Carlo Framework
+		      Simple Monte Carlo Library
 
 		       Copyright 2008 James Ravn
 			  james.ravn@gmail.com
@@ -6,7 +6,7 @@
 Introduction
 ------------
 
-The goal is to provide a monte carlo framework that is fast, portable,
+The goal is to provide a monte carlo library that is fast, portable,
 and simple. The only thing required by the user is to create their
 simulation.
 
@@ -38,7 +38,7 @@ how to compile your own project.
 Using
 -----
 
-The details of using the framework are provided in the header
+The details of using the library are provided in the header
 files. Mc.h is a good starting point.
 
 The basic steps are:
