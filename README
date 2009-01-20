@@ -10,6 +10,15 @@ The goal is to provide a monte carlo framework that is fast, portable,
 and simple. The only thing required by the user is to create their
 simulation.
 
+Features
+--------
+
+* Bootstrap algorithm
+* Error calculation using bootstrap
+* High quality pseudo random number generator
+* Distribution generators
+* No required libraries apart from the C90 standard library
+
 Where To Get It
 ---------------
 
@@ -17,7 +26,7 @@ The latest version can be cloned using git:
     
     git clone git://git.jsravn.com/mc.git
 
-Please send bug reports and patches to mc-devel@lists.jsravn.com.
+Please send bug reports and patches to james.ravn@gmail.com.
 
 Testing & Compiling
 -------------------
@@ -42,15 +51,6 @@ successful, 0.0 if it is not.
 
 3. Pass in your function to mc_simulate_many. The results can be
 accessed using the functions mc_mu(), mc_err(), and mc_var().
-
-Features
---------
-
-* Bootstrap algorithm
-* Error calculation using bootstrap
-* High quality pseudo random number generator
-* Distribution generators
-* No required libraries apart from the C90 standard library
 
 Portability
 -----------
